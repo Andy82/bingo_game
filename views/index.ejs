@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Bingo Game</title>
+		<link href="css/jquery.mobile-1.1.1.min.css" rel="stylesheet" type="text/css">
+		<link href="css/style.css" rel="stylesheet" type="text/css">
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/jquery.mobile-1.1.1.min.js"></script>
+		<script src="/socket.io/socket.io.js"></script>
+		<script src="js/game.js"></script>
+	</head>
+
+	<body>
+
+		<div id="roomPage" data-role="page">
+
+			<div data-role="header" data-theme="a" data-position="fixed">
+				<h1>Bingo! Rooms <span id="onlineUserCount"></span></h1>
+		
+			<a href="/login" class="backToRoomPage" class="ui-btn-right">Войти</a>
+			
+			</div><!-- /header -->
+
+			<div data-role="content">	
+				<ul id="roomList" data-role="listview">					
+				</ul>
+			</div><!-- /content -->
+			<div data-role="footer" data-theme="a" data-position="fixed">
+				<h4>Welcome to the BINGO. Please select game room.</h4>
+			</div><!-- /footer -->
+			
+		</div><!-- /page -->
+		<!-- Start of second page -->
+		<div id="gamePage" data-role="page">
+
+			<div data-role="header" data-theme="a" data-position="fixed">
+				<a href="#" class="backToRoomPage" data-icon="back" class="ui-btn-left">Back</a>
+				<span class="ui-title" id="timerSpan"></span>
+			</div><!-- /header -->
+
+			<div data-role="content">
+				<h3><span id="gameFinishedSpan"><span></h3>
+				<br/>	
+				<h3><span id="chosenNumberSpan"></span></h3>
+				<br/>
+				
+				<ul id="messages"></ul>
+				<form action="#">
+				<input id="m1" style = "width :5%;text-align: center;display:inline-block;margin-left:1%;margin-right:1%;" maxlength="1" type="text" autocomplete="off" />
+				<input id="m2" style = "width :5%;text-align: center;display:inline-block;margin-right:1%;" maxlength="1" type="text" autocomplete="off" />
+				<input id="m3" style = "width :5%;text-align: center;display:inline-block;margin-right:1%;" maxlength="1" type="text" autocomplete="off" />
+				<input id="m4" style = "width :5%;text-align: center;display:inline-block;margin-right:1%;" maxlength="1" type="text" autocomplete="off" />
+				<input id="m5" style = "width :5%;text-align: center;display:inline-block" maxlength="1" type="text" autocomplete="off" />
+				
+				<button id="send">Send</button>
+				</form>
+			</div><!-- /content -->
+			<div data-role="footer" data-theme="a" data-position="fixed">
+				<h4>Welcome to BINGO game!</h4>
+			</div><!-- /footer -->
+		</div><!-- /page -->
+
+	</body>
+</html>

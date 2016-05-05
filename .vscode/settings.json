@@ -1,0 +1,16 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+    // Controls the font size.
+    "editor.fontSize":17,
+        // Controls the font family.
+    "editor.fontFamily": "",
+
+    // Controls the line height.
+    "editor.lineHeight": 0,
+
+    // Controls visibility of line numbers
+    "editor.lineNumbers": true,
+
+    // Controls visibility of the glyph margin
+    "editor.glyphMargin": false,
+}

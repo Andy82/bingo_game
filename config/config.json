@@ -1,0 +1,25 @@
+{
+    "port": 3000,
+    "maxNumbers" : 5,
+    "playerLimit" : 2,
+    "tablesQuantity": 4,
+    "mongoose": {
+    "uri": "mongodb://127.0.0.1:27017/bingo",
+    "options": {
+      "server": {
+        "socketOptions": {
+          "keepAlive": 1
+        }
+      }
+    }
+  },
+  "session": {
+    "secret": "TheSicretKey",
+    "key": "sid",
+    "cookie": {
+      "path": "/",
+      "httpOnly": true,
+      "maxAge": null
+    }
+  }
+}
