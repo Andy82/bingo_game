@@ -120,15 +120,16 @@ io.set('authorization', function(handshake, callback) {
         // сделать handshakeData.cookies - объектом с cookie
         handshake.cookies = cookie.parse(handshake.headers.cookie || '');
         var sidCookie = handshake.cookies[config.get('session:key')];
-        //var sid = connect.utils.parseSignedCookie(sidCookie, config.get('session:secret'));
+        var sid = connect.utils.parseSignedCookie(sidCookie, config.get('session:secret'));
         
-        var cookieParser = require('cookie-parser');
+        //var cookieParser = require('cookie-parser');
 
-      var sid = cookieParser.signedCookie(sidCookie, config.get('session:secret'));
+      //var sid = cookieParser.signedCookie(sidCookie, config.get('session:secret'));
 
 
         loadSession(sid, callback);
       },
+      
       function(session, callback) {
 
         if (!session) {
@@ -138,6 +139,7 @@ io.set('authorization', function(handshake, callback) {
         handshake.session = session;
         loadUser(session, callback);
       },
+      
       function(user, callback) {
         if (!user) {
           callback(new HttpError(403, "Anonymous session may not connect"));

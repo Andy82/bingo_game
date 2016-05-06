@@ -18,9 +18,22 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public'));
 
+
 require('routes')(app);
 
 app.use(express.static(path.join(__dirname, 'public')));
+
+var sessionStore = require('lib/sessionStore');
+app.use(express.session({
+  secret: config.get('session:secret'),
+  key: config.get('session:key'),
+  cookie: config.get('session:cookie'),
+  store: sessionStore
+}));
+
+
+app.use(require('middleware/sendHttpError'));
+app.use(require('middleware/loadUser'));
 
 var server = http.createServer(app);
 server.listen(app.get('port'), function(){
