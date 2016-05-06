@@ -22,6 +22,7 @@ var isCardShown = false;
 		$('#m5').prop('disabled', true);
 		$('#send').prop('disabled', true);
 		return false;
+		
 	});
 
 	socket.on('echo', function(msg){
