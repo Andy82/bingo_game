@@ -14,7 +14,7 @@
     }
   },
   "session": {
-    "secret": "TheSicretKey",
+    "secret": "BingoSicretKey",
     "key": "sid",
     "cookie": {
       "path": "/",
