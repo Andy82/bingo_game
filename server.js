@@ -8,9 +8,9 @@ var app = express();
 app.set('port', config.get('port'));
 app.use(express.methodOverride());
 app.use(express.bodyParser());
+app.use(express.cookieParser());
 app.use(express.favicon());
 app.use(express.urlencoded());
-app.use(express.cookieParser());
 app.use(app.router);
 
 app.engine('ejs', require('ejs-locals'));
@@ -18,12 +18,8 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public'));
 
-
-require('routes')(app);
-
-app.use(express.static(path.join(__dirname, 'public')));
-
 var sessionStore = require('lib/sessionStore');
+
 app.use(express.session({
   secret: config.get('session:secret'),
   key: config.get('session:key'),
@@ -31,9 +27,14 @@ app.use(express.session({
   store: sessionStore
 }));
 
-
 app.use(require('middleware/sendHttpError'));
 app.use(require('middleware/loadUser'));
+
+require('routes')(app);
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+
 
 var server = http.createServer(app);
 server.listen(app.get('port'), function(){
