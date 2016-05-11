@@ -1,5 +1,6 @@
 $(document).ready(function(){
-var socket = io.connect('http://localhost', { reconnect: false });
+//var socket = io.connect('http://localhost', { reconnect: false });
+var socket = io.connect();
 
 var isCardShown = false;
 
@@ -45,7 +46,7 @@ var isCardShown = false;
 	socket.on('tableList',function(data){
 		var html = "";
 		for(var i = 0; i < data.tableList.length; i++){
-			html += "<li><a href='#' class='showGamePage' data-id='"+ data.tableList[i].id +"'>"+ data.tableList[i].name +" &nbsp;&nbsp;&nbsp;&nbsp;"
+			html += "<li><a href='/table' class='showGamePage' data-id='"+ data.tableList[i].id +"'>"+ data.tableList[i].name +" &nbsp;&nbsp;&nbsp;&nbsp;"
 				+ data.tableList[i].players.length +"/"+ data.tableList[i].playerLimit +"</a></li>"
 		}
 		$('#roomList').empty();
@@ -57,10 +58,6 @@ var isCardShown = false;
 		$('.showGamePage').click(function(){
 			var selectedTableId = $(this).attr('data-id');
 			socket.emit('connectToTable', {tableID: selectedTableId});
-			//$.mobile.changePage("#gamePage");
-		//window.location = "#";
-		//window.location = "/table";
-
 		});
 	});
 

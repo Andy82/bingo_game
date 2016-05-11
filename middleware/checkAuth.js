@@ -1,9 +1,9 @@
-var HttpError = require('error').HttpError;
-
 module.exports = function(req, res, next) {
   if (!req.session.user) {
-    return next(new HttpError(401, "Вы не авторизованы"));
+    res.send('You are not authorized to view this page');
+  } else {
+    next();
   }
-
-  next();
 };
+
+//http://stackoverflow.com/questions/7990890/how-to-implement-login-auth-in-node-js/8003291#8003291

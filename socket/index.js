@@ -17,8 +17,8 @@ var HttpError = require('error').HttpError;
 module.exports = function(server) {
    
 var io = socket.listen(server, { log: false });
-io.set('log level', 1); //Disable Log
-io.set('origins', 'localhost:*');
+
+//io.set('log level', 1); //Disable Log
 io.set('logger', log);
 
 var utility = new Utility();
@@ -43,8 +43,9 @@ io.sockets.on('connection', function (socket) {
   });
     
   //TODO: Add user name to events on connection and disconnect
-  var username = socket.handshake.user.get('username');
-  socket.broadcast.emit('join', username);  
+ // handshake.cookies = cookie.parse(handshake.headers.cookie || '');
+  //var username = socket.handshake.user.get('username');
+  //socket.broadcast.emit('join', username);  
     
   
   function numbersReceived(data){  
@@ -60,6 +61,8 @@ io.sockets.on('connection', function (socket) {
     player.status = "available";
     room.addPlayer(player);
     //Send Other Players that new player has connected
+    utility.sendEventToAllPlayers('showUsersOnline', {playerCount:room.players.length},io,room.players);
+    
     utility.sendEventToAllPlayersButPlayer('newUserOnline', {message:"Player is online",username:data.username},io,room.players,player);
     utility.sendEventToAllPlayers('tableList', {tableList: room.getTableMessage(),playerCount:room.players.length},io,room.players);
   }
@@ -111,109 +114,6 @@ io.sockets.on('connection', function (socket) {
       {tableList: room.getTableMessage(),playerCount: room.players.length},io,room.players);
   }
 });
-
-
-
-io.set('authorization', function(handshake, callback) {
-    async.waterfall([
-      function(callback) {
-        // сделать handshakeData.cookies - объектом с cookie
-        handshake.cookies = cookie.parse(handshake.headers.cookie || '');
-        var sidCookie = handshake.cookies[config.get('session:key')];
-        var sid = connect.utils.parseSignedCookie(sidCookie, config.get('session:secret'));
-
-        loadAuthSession(sid, callback);
-      },
-      
-      function(session, callback) {
-
-        if (!session) {
-          callback(new HttpError(401, "No session"));
-        }
-
-        handshake.session = session;
-        loadUser(session, callback);
-      },
-      
-      function(user, callback) {
-        if (!user) {
-          callback(new HttpError(403, "Anonymous session may not connect"));
-        }
-
-        handshake.user = user;
-        callback(null);
-      }
-
-    ], function(err) {
-      if (!err) {
-        return callback(null, true);
-      }
-
-      if (err instanceof HttpError) {
-        return callback(null, false);
-      }
-
-      callback(err);
-    });
-
-  });
-
-
-io.sockets.on('sessreload', function(sid) {
-var clients = io.sockets.clients();
-
-for (var i=1; i< clients.length; i++) {
-   var client = clients[i];
- // clients.forEach(function(client) { //issue on https://github.com/karma-runner/karma/issues/1782
-      if (client.handshake.session.id != sid) return;
-
-      loadAuthSession(sid, function(err, session) {
-        if (err) {
-          client.emit("error", "server error");
-          client.disconnect();
-          return;
-        }
-
-        if (!session) {
-          client.emit("logout");
-          client.disconnect();
-          return;
-        }
-
-        client.handshake.session = session;
-      });
-    }
-});
-
-
-function loadSession(sid, callback) {
-  // sessionStore callback is not quite async-style!
-  sessionStore.load(sid, function(err, session) {
-    if (arguments.length == 0) {
-      // no arguments => no session
-      return callback(null, null);
-    } else {
-      return callback(null, session);
-    }
-  });
-}
-
-function loadUser(session, callback) {
-  if (!session.user) {
-    log.debug("Session %s is anonymous", session.id);
-    return callback(null, null);
-  }
-  log.debug("Retrieving user ", session.user);
-  User.findById(session.user, function(err, user) {
-    if (err) return callback(err);
-    if (!user) {
-      return callback(null, null);
-    }
-    log.debug("user findbyId result: " + user);
-    callback(null, user);
-  });
-}
-
 
      return io;
 };
