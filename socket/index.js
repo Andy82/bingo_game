@@ -1,9 +1,9 @@
 var socket = require('socket.io');
-var config = require('../config');
 var log = require('../lib/log')(module);
+var config = require('../config');
+var connect = require('connect'); // npm i connect
 var async = require('async');
 var cookie = require('cookie');  
-var connect = require('connect'); // npm i connect
 var sessionStore = require('lib/sessionStore');
 var Utility = require('../models/utility.js');
 var User = require('../models/user').User;
@@ -51,7 +51,7 @@ io.sockets.on('connection', function (socket) {
     var player = room.getPlayer(socket.id);
     console.log("Player " + player.name + " sended card: " + data);
     player.card = data;
-  };
+  }
     
   function connectToServer(data){  
     //Add player to the room
@@ -62,7 +62,7 @@ io.sockets.on('connection', function (socket) {
     //Send Other Players that new player has connected
     utility.sendEventToAllPlayersButPlayer('newUserOnline', {message:"Player is online",username:data.username},io,room.players,player);
     utility.sendEventToAllPlayers('tableList', {tableList: room.getTableMessage(),playerCount:room.players.length},io,room.players);
-  };
+  }
   
   function connectToTable(data){
     var player = room.getPlayer(socket.id);
@@ -78,7 +78,7 @@ io.sockets.on('connection', function (socket) {
         table.gameObj.startGame(utility,io,table);
       }
     }
-  };
+  }
 
   function userLeaveFromTable(data){
     //Check if the user is in table
@@ -91,7 +91,7 @@ io.sockets.on('connection', function (socket) {
       socket.emit('playerDisconnectedFromTable', {username:player.name});
       utility.sendEventToAllPlayers('tableList', {tableList: room.getTableMessage(),playerCount: room.players.length},io,room.players);
     }
-  };
+  }
     
   function disconnect(){
     //Check player status whether she is in table or game
@@ -109,7 +109,7 @@ io.sockets.on('connection', function (socket) {
       {message:"Player is disconnected",username:player.name},io,room.players,player);
     utility.sendEventToAllPlayers('tableList',
       {tableList: room.getTableMessage(),playerCount: room.players.length},io,room.players);
-  };
+  }
 });
 
 
@@ -121,13 +121,8 @@ io.set('authorization', function(handshake, callback) {
         handshake.cookies = cookie.parse(handshake.headers.cookie || '');
         var sidCookie = handshake.cookies[config.get('session:key')];
         var sid = connect.utils.parseSignedCookie(sidCookie, config.get('session:secret'));
-        
-        //var cookieParser = require('cookie-parser');
 
-      //var sid = cookieParser.signedCookie(sidCookie, config.get('session:secret'));
-
-
-        loadSession(sid, callback);
+        loadAuthSession(sid, callback);
       },
       
       function(session, callback) {
@@ -172,7 +167,7 @@ for (var i=1; i< clients.length; i++) {
  // clients.forEach(function(client) { //issue on https://github.com/karma-runner/karma/issues/1782
       if (client.handshake.session.id != sid) return;
 
-      loadSession(sid, function(err, session) {
+      loadAuthSession(sid, function(err, session) {
         if (err) {
           client.emit("error", "server error");
           client.disconnect();

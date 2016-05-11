@@ -11,7 +11,6 @@ app.use(express.bodyParser());
 app.use(express.cookieParser());
 app.use(express.favicon());
 app.use(express.urlencoded());
-app.use(app.router);
 
 app.engine('ejs', require('ejs-locals'));
 app.set('views', __dirname + '/views');
@@ -30,6 +29,8 @@ app.use(express.session({
 app.use(require('middleware/sendHttpError'));
 app.use(require('middleware/loadUser'));
 
+
+app.use(app.router);
 require('routes')(app);
 
 app.use(express.static(path.join(__dirname, 'public')));
