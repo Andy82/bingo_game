@@ -82,5 +82,3 @@ util.inherits(AuthError, Error);
 AuthError.prototype.name = 'AuthError';
 
 exports.AuthError = AuthError;
-
-

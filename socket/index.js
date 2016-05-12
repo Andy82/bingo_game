@@ -4,7 +4,6 @@ var config = require('../config');
 var connect = require('connect'); // npm i connect
 var async = require('async');
 var cookie = require('cookie');  
-var sessionStore = require('lib/sessionStore');
 var Utility = require('../models/utility.js');
 var User = require('../models/user').User;
 var Player = require('../models/player.js');
@@ -24,7 +23,6 @@ io.set('logger', log);
 var utility = new Utility();
 var room = new Room("Test Room");
 room.tables = utility.createSampleTables(config.get("tablesQuantity"));
-
 
 
 // <Socket.IO Section>
