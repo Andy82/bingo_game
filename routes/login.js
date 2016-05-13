@@ -20,20 +20,9 @@ exports.post = function(req, res, next) {
     }
 
     req.session.user = user._id;
+    req.session.currentUser = {id: user._id, name: user.username};
     res.send({});
     
 
   });
-  
-/*
-  var post = req.body;
-  if (post.user === 'john' && post.password === 'johnspassword') {
-    req.session.user_id = johns_user_id_here;
-    res.redirect('/my_secret_page');
-  } else {
-    res.send('Bad user/pass');
-  }
-*/
-
-
 };

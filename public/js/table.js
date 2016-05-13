@@ -1,9 +1,8 @@
 $(document).ready(function(){
 var socket = io.connect();
+	socket.emit('pageLoaded', 'table');
 
-var isCardShown = false;
-
-	 $(document.forms['table-form']).on('submit', function(){
+ 	$(document.forms['table-form']).on('submit', function(){
 		socket.emit('dataIn', $('#m1').val());
 		var values = [];
 		values.push($('#m1').val());
@@ -23,6 +22,19 @@ var isCardShown = false;
 		$('#send').prop('disabled', true);
 		return false;
 	});
+
+
+	$(".backToRoomPage").click(function(){
+		socket.emit('userLeaveFromTable',{});
+		$("#gameFinishedSpan").text("");
+	});
+
+
+	$(".backToRoomPage").click(function(){
+		socket.emit('userLeaveFromTable',{});
+		$("#gameFinishedSpan").text("");
+	});
+
 
 	socket.on('echo', function(msg){
 		$('#messages').append($('<li>').text(msg));
@@ -61,3 +73,4 @@ var isCardShown = false;
 	});
 
 });
+

@@ -1,12 +1,9 @@
 $(document).ready(function(){
 var socket = io.connect();
-
-	$(".backToRoomPage").click(function(){
-		socket.emit('userLeaveFromTable',{});
-		isCardShown = false;
-		$("#gameFinishedSpan").text("");
-	});
-
+	
+	
+	//socket.emit('userLeaveFromTable');
+	
 	socket.on('userOnline', function (data) {
 		socket.emit('connectToServer', { username : 'AAAAAA' });
 	});

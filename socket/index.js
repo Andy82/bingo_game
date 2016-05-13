@@ -2,8 +2,10 @@ var socket = require('socket.io');
 var log = require('../lib/log')(module);
 var config = require('../config');
 var connect = require('connect'); // npm i connect
-var async = require('async');
 var cookie = require('cookie');  
+var cookieParser = require('cookie-parser');
+var async = require('async');
+var sharedsession = require('express-socket.io-session');
 var Utility = require('../models/utility.js');
 var User = require('../models/user').User;
 var Player = require('../models/player.js');
@@ -13,66 +15,74 @@ var Room = require('../models/room.js');
 
 var HttpError = require('error').HttpError;
 
-module.exports = function(server) {
-   
-var io = socket.listen(server, { log: false });
+module.exports = function(server, session) {
 
-//io.set('log level', 1); //Disable Log
-io.set('logger', log);
+var io = socket.listen(server);
+io.use(sharedsession(session));
 
 var utility = new Utility();
 var room = new Room("Test Room");
 room.tables = utility.createSampleTables(config.get("tablesQuantity"));
 
 
+
 // <Socket.IO Section>
 io.sockets.on('connection', function (socket) {
   socket.emit('userOnline');
   socket.on('connectToServer',connectToServer);
+  socket.on('connectToRoom',connectToRoom);
   socket.on('connectToTable',connectToTable);  
   socket.on('userLeaveFromTable',userLeaveFromTable);
   socket.on('disconnect', disconnect);
   socket.on('numbersReceived', numbersReceived);
-    
+  socket.on('pageLoaded', pageLoaded);
+  
+  
   //Only for testing stuff
   socket.on('dataIn', function(message){ 
     console.log("echo: " + message);
     socket.emit('echo', message);
   });
-    
-  //TODO: Add user name to events on connection and disconnect
- // handshake.cookies = cookie.parse(handshake.headers.cookie || '');
-  //var username = socket.handshake.user.get('username');
-  //socket.broadcast.emit('join', username);  
-    
-  
+
+  function pageLoaded(data){  
+      socket.emit('showUsersOnline', {playerCount:room.players.length});
+  }
+
   function numbersReceived(data){  
-    var player = room.getPlayer(socket.id);
+    var player = room.getPlayer(socket.handshake.session.user);
     console.log("Player " + player.name + " sended card: " + data);
     player.card = data;
   }
     
   function connectToServer(data){  
-    //Add player to the room
-    var player = new Player(socket.id);
-    player.setName(data.username);
-    player.status = "available";
-    room.addPlayer(player);
-    //Send Other Players that new player has connected
-    utility.sendEventToAllPlayers('showUsersOnline', {playerCount:room.players.length},io,room.players);
+    var sessionId = socket.handshake.session.user;
+    var player = room.getPlayer(sessionId)
     
-    utility.sendEventToAllPlayersButPlayer('newUserOnline', {message:"Player is online",username:data.username},io,room.players,player);
-    utility.sendEventToAllPlayers('tableList', {tableList: room.getTableMessage(),playerCount:room.players.length},io,room.players);
+    if (!player && sessionId !== undefined) {
+        player = new Player(sessionId);
+        player.setName(data.username);
+        player.status = "available";
+        room.addPlayer(player);
+    }
+    socket.emit('showUsersOnline', {playerCount:room.players.length});
   }
   
+  
+  
+  function connectToRoom(data){  
+      var sessionId = socket.handshake.session.user;
+      var player = room.getPlayer(sessionId)
+      drawTable();
+  } 
+  
+  
   function connectToTable(data){
-    var player = room.getPlayer(socket.id);
+    var player = room.getPlayer(socket.handshake.session.user);
     var table = room.getTable(data.tableID);
     if(table.isTableAvailable() && table.addPlayer(player)){
       player.tableID = table.id;
       player.status = 'inTable';
-      utility.sendEventToTable('userConnectedToTable',  {message:"Player is in Table"},io,table);
-      utility.sendEventToAllPlayers('tableList', {tableList: room.getTableMessage(),playerCount:room.players.length},io,room.players);
+      drawTable();
       if(table.isPlaying()){
         //Now table starts playing
         utility.sendEventToTable('gameStarted', {tableList: room.getTableMessage()},io,table);
@@ -81,37 +91,44 @@ io.sockets.on('connection', function (socket) {
     }
   }
 
+
   function userLeaveFromTable(data){
     //Check if the user is in table
-    var player = room.getPlayer(socket.id);
-    if(player.tableID != ""){
+    var player = room.getPlayer(socket.handshake.session.user);
+    if(player  !== undefined && player.tableID != ""){
       var table = room.getTable(player.tableID);
       table.removePlayer(player);
       utility.sendEventToTable('userDisconnectedFromTable', {username:player.name},io,table);
       utility.sendEventToAllFreePlayersButPlayer('userDisconnectedFromTable',{username:player.name},io,room.players,player);
       socket.emit('playerDisconnectedFromTable', {username:player.name});
-      utility.sendEventToAllPlayers('tableList', {tableList: room.getTableMessage(),playerCount: room.players.length},io,room.players);
+      drawTable();
     }
   }
-    
+
+
   function disconnect(){
-    //Check player status whether she is in table or game
-    var player = room.getPlayer(socket.id);
+    var player = room.getPlayer(socket.handshake.session.user);
     if (player === null) return;
     if(player.status != "available"){
-      //Remove from table
       var table = room.getTable(player.tableID);
       table.removePlayer(player);
     }
-    
-    //Remove from room
     room.removePlayer(player);
-    utility.sendEventToAllPlayersButPlayer('userDisconnectedFromGame',
-      {message:"Player is disconnected",username:player.name},io,room.players,player);
-    utility.sendEventToAllPlayers('tableList',
-      {tableList: room.getTableMessage(),playerCount: room.players.length},io,room.players);
-  }
-});
 
+    drawTable();
+  }
+  
+  
+  
+  function drawTable(){
+      var tables = room.getTableMessage();
+        socket.emit('tableList', {tableList: tables});
+        //utility.sendEventToAllPlayers('tableList', {tableList: room.getTableMessage(),playerCount: room.players.length},io,room.players);
+  }
+  
+  
+  
+  
+});
      return io;
 };

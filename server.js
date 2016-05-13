@@ -2,7 +2,7 @@ var express = require('express');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser')
 var favicon = require('serve-favicon');
-var session = require('express-session')
+//var session = require('express-session')
 var methodOverride = require('method-override')
 var http = require('http');
 var path = require('path');
@@ -28,6 +28,18 @@ app.set('view engine', 'ejs');
 
 var sessionStore = require('lib/sessionStore');
 
+session = require("express-session")({
+  secret: config.get('session:secret'),
+  key: config.get('session:key'),
+  cookie: config.get('session:cookie'),
+  store: sessionStore,
+  resave: true,
+  saveUninitialized: true
+  }),
+
+app.use(session);
+
+/*
 app.use(session({
   secret: config.get('session:secret'),
   key: config.get('session:key'),
@@ -35,8 +47,7 @@ app.use(session({
   store: sessionStore,
   resave: true,
   saveUninitialized: true
-}));
-
+}));*/
 
 app.use(require('middleware/sendHttpError'));
 app.use(require('middleware/loadUser'));
@@ -52,5 +63,6 @@ server.listen(app.get('port'), function(){
 });
 
 
-var io = require('./socket')(server);
+var io = require('./socket')(server, session);
 app.set('io', io);
+
