@@ -17,7 +17,7 @@ var HttpError = require('error').HttpError;
 
 module.exports = function(server, session) {
 
-var io = socket.listen(server);
+var io = socket.listen(server, { log: false });
 io.use(sharedsession(session));
 
 var utility = new Utility();
@@ -50,17 +50,24 @@ io.sockets.on('connection', function (socket) {
 
   function numbersReceived(data){  
     var player = room.getPlayer(socket.handshake.session.user);
-    console.log("Player " + player.name + " sended card: " + data);
-    player.card = data;
+    
+    if (player.card !== data)
+    {
+      console.log("Player " + player.name + " sended card: " + data);
+      player.card = data;
+      socket.emit('echo', "Server received cards: " + data + " from user " + player.name);
+    }
+    
+      socket.emit('blockFields', player.card);
   }
     
-  function connectToServer(data){  
+  function connectToServer(){  
     var sessionId = socket.handshake.session.user;
     var player = room.getPlayer(sessionId)
     
     if (!player && sessionId !== undefined) {
         player = new Player(sessionId);
-        player.setName(data.username);
+        player.setName(socket.handshake.session.currentUser.name);
         player.status = "available";
         room.addPlayer(player);
     }
@@ -85,7 +92,7 @@ io.sockets.on('connection', function (socket) {
       drawTable();
       if(table.isPlaying()){
         //Now table starts playing
-        utility.sendEventToTable('gameStarted', {tableList: room.getTableMessage()},io,table);
+        socket.emit('gameStarted', {tableList: room.getTableMessage()});
         table.gameObj.startGame(utility,io,table);
       }
     }
@@ -98,8 +105,8 @@ io.sockets.on('connection', function (socket) {
     if(player  !== undefined && player.tableID != ""){
       var table = room.getTable(player.tableID);
       table.removePlayer(player);
-      utility.sendEventToTable('userDisconnectedFromTable', {username:player.name},io,table);
-      utility.sendEventToAllFreePlayersButPlayer('userDisconnectedFromTable',{username:player.name},io,room.players,player);
+      socket.emit('userDisconnectedFromTable', {username:player.name});
+      socket.emit('userDisconnectedFromTable',{username:player.name});
       socket.emit('playerDisconnectedFromTable', {username:player.name});
       drawTable();
     }
@@ -123,7 +130,6 @@ io.sockets.on('connection', function (socket) {
   function drawTable(){
       var tables = room.getTableMessage();
         socket.emit('tableList', {tableList: tables});
-        //utility.sendEventToAllPlayers('tableList', {tableList: room.getTableMessage(),playerCount: room.players.length},io,room.players);
   }
   
   

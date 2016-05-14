@@ -36,15 +36,21 @@ Game.prototype.startGame = function(utility,io,table) {
 		
 	function end(time) {
 		var chosenNumber = gameObject.generateNumbers();
+		var Data = require('models/data').Data;
+		data = new Data({chosenNumber: gameObject.numArray});
 		
 		utility.sendEventToTableInPlay('timerEnd',{time: time},io,table);
 		utility.sendEventToTableInPlay('showResults',{numArray: gameObject.numArray},io,table);
 		utility.sendEventToTableInPlay('gameFinished',{message:"Game is finished"},io,table);
 	  
       	var bingoWinners = gameObject.checkAnyPlayerWins(table);
-			if(bingoWinners.length > 0)
+			if(bingoWinners.length > 0){
 				utility.sendEventToSelectedPlayers('bingoWinner',{message:"You are the BINGO winner!"},io,bingoWinners);
-    };
+			}
+		data.save(function(err) { 
+          if (err) log.info("Can't save game data");
+        });   
+ };
 
 };
 

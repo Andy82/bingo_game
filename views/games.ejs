@@ -1,0 +1,17 @@
+<% layout('page') -%>
+<% block('title', 'Games'); -%>
+
+<p class="lead">Games list</p>
+
+<table>
+   <tr>
+     <td>Id</td>
+     <td>Win numbers</td>
+   </tr>
+<% for(var i=0; i < games.length; i++) { %>
+   <tr>
+     <td><%= games[i]._id %></td>
+     <td><%= games[i].chosenNumber %></td>
+   </tr>
+<% } %>
+</table>

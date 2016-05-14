@@ -13,4 +13,6 @@ app.post('/login', require('./login').post);
 app.get('/logout', require('./logout').get);
 app.post('/logout', require('./logout').post);
 
+app.get('/users', require('./users').get);
+app.get('/games', require('./games').get);
 };

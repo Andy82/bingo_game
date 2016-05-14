@@ -1,11 +1,8 @@
-$(document).ready(function(){
-var socket = io.connect();
-	
-	
-	//socket.emit('userLeaveFromTable');
+$( window ).load(function(){
+	var socket = io.connect();
 	
 	socket.on('userOnline', function (data) {
-		socket.emit('connectToServer', { username : 'AAAAAA' });
+		socket.emit('connectToServer');
 	});
 
 	socket.on('showUsersOnline',function(data){

@@ -1,4 +1,6 @@
 $(document).ready(function(data){
+
+	
 var socket = io.connect();
 	socket.emit('pageLoaded', 'room');
 	socket.emit('connectToRoom', 'room');
