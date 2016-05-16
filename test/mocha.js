@@ -6,16 +6,33 @@ var assert = require('chai').assert;
 
 describe("Bingo game", function() {
 
-  describe("Check Main screen", function() {
-
-    var url = "http://localhost:3000/";
-
-    it("Returns status 200", function(done) {
-      request(url, function(error, response, body) {
+  describe("Check screens", function() {
+    it("Root", function(done) {
+      request("http://localhost:3000/", function(error, response, body) {
         expect(response.statusCode).to.equal(200);
         done();
       });
     });
+    it("Table", function(done) {
+      request("http://localhost:3000/table", function(error, response, body) {
+        expect(response.statusCode).to.equal(200);
+        done();
+      });
+    });   
+    
+    it("Room", function(done) {
+      request("http://localhost:3000/room", function(error, response, body) {
+        expect(response.statusCode).to.equal(200);
+        done();
+      });
+    });    
+    
+    it("Login", function(done) {
+      request("http://localhost:3000/login", function(error, response, body) {
+        expect(response.statusCode).to.equal(200);
+        done();
+      });
+    });   
   });
   
   describe("Check Game Logic", function() {
