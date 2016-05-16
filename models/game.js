@@ -37,7 +37,6 @@ Game.prototype.startGame = function(utility,io,table) {
 	function end(time) {
 		var chosenNumber = gameObject.generateNumbers();
 		var Data = require('models/data').Data;
-		data = new Data({chosenNumber: gameObject.numArray});
 		
 		utility.sendEventToTableInPlay('timerEnd',{time: time},io,table);
 		utility.sendEventToTableInPlay('showResults',{numArray: gameObject.numArray},io,table);
@@ -47,6 +46,8 @@ Game.prototype.startGame = function(utility,io,table) {
 			if(bingoWinners.length > 0){
 				utility.sendEventToSelectedPlayers('bingoWinner',{message:"You are the BINGO winner!"},io,bingoWinners);
 			}
+	
+		data = new Data({chosenNumber: gameObject.numArray});
 		data.save(function(err) { 
           if (err) log.info("Can't save game data");
         });   

@@ -7,5 +7,6 @@ var mongoose = require('lib/mongoose');
   chosenNumber: {
     type: String
   }
+  
 });
 exports.Data = mongoose.model('Data', Data);
