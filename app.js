@@ -1,11 +1,11 @@
 var express = require('express');
 
 //Testing Stopwatch
-/*Stopwatch = require('./models/stopwatch.js');
+Stopwatch = require('./models/stopwatch.js');
 var stopwatch = new Stopwatch();
 stopwatch.start();
 stopwatch.on('tick', function(time) { console.log(time);});
-*/
+
 //Testing Stopwatch
 
 //Testing Number Generation
