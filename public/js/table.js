@@ -34,12 +34,14 @@ var socket = io.connect();
 
 	$("input[type=text]").focus(function () {
 		$(this).animate({
-			width: "10%"
+			width: "10%",
+			fontSize: "3em"
 		}, 100);
 	});
 	$(this).focusout(function () {
 		$("input[type=text]").animate({
-			width: "5%"
+			width: "5%",
+			fontSize: "1em"
 		}, 100);
 	});
 
@@ -55,7 +57,8 @@ var socket = io.connect();
 	});
 
 	socket.on('timerEnd',function(data){
-		$("#timerSpan").text("Game Over");
+		$("#timerSpan").text("Game Over").css({fontSize: '1em', opacity: '0.1'});
+		$("#timerSpan").animate({fontSize: '3em', opacity: '1'}, "slow");
 	});
 
 	socket.on('showResults',function(data){
@@ -70,12 +73,14 @@ var socket = io.connect();
 
 
 	socket.on('gameFinished',function(data){
-		$("#gameFinishedSpan").text("Game is Finished");
+		$("#gameFinishedSpan").text("Game is Finished").css({fontSize: '1em', opacity: '0.1'});
+		$("#gameFinishedSpan").animate({fontSize: '3em', opacity: '1'}, "slow");
 	});
 
 
 	socket.on('bingoWinner',function(data){
 		$("#gameFinishedSpan").text("You are the Bingo Winner");
+		$("#gameFinishedSpan").animate({fontSize: '5em', opacity: '1'}, "slow");
 	});
 
 })();
