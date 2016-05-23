@@ -30,6 +30,7 @@ var socket = io.connect();
 		$('#m4').prop('disabled', true).val(data[3]);
 		$('#m5').prop('disabled', true).val(data[4]);
 		$('#send').prop('disabled', true);
+		$('h4').toggle(2000);
 	});
 
 	$("input[type=text]").focus(function () {
@@ -45,6 +46,13 @@ var socket = io.connect();
 		}, 100);
 	});
 
+	  $("input[type=text]").keypress(function (e) {
+     if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+        $("#timerSpan").html("Digits Only").show().fadeOut("slow");
+        return false;
+    }
+   });
+
 	socket.on('echo', function(msg){
 		$('#messages').append($('<li>').text(msg));
 	});
@@ -58,7 +66,7 @@ var socket = io.connect();
 
 	socket.on('timerEnd',function(data){
 		$("#timerSpan").text("Game Over").css({fontSize: '1em', opacity: '0.1'});
-		$("#timerSpan").animate({fontSize: '3em', opacity: '1'}, "slow");
+		$("#timerSpan").animate({fontSize: '2em', opacity: '1'}, "slow");
 	});
 
 	socket.on('showResults',function(data){
@@ -74,13 +82,13 @@ var socket = io.connect();
 
 	socket.on('gameFinished',function(data){
 		$("#gameFinishedSpan").text("Game is Finished").css({fontSize: '1em', opacity: '0.1'});
-		$("#gameFinishedSpan").animate({fontSize: '3em', opacity: '1'}, "slow");
+		$("#gameFinishedSpan").animate({fontSize: '2em', opacity: '1'}, "slow");
 	});
 
 
 	socket.on('bingoWinner',function(data){
 		$("#gameFinishedSpan").text("You are the Bingo Winner");
-		$("#gameFinishedSpan").animate({fontSize: '5em', opacity: '1'}, "slow");
+		$("#gameFinishedSpan").animate({fontSize: '3em', opacity: '1'}, "slow");
 	});
 
 })();
