@@ -2,7 +2,6 @@ var express = require('express');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser')
 var favicon = require('serve-favicon');
-//var session = require('express-session')
 var methodOverride = require('method-override')
 var http = require('http');
 var path = require('path');
@@ -12,14 +11,14 @@ var log = require('./lib/log')(module);
 var app = express();
 app.set('port', config.get('port'));
 
-//app.use(bodyParser());
+// req.cookies
 app.use(cookieParser());
 app.use(favicon(__dirname + '/public/favicon.ico'));
 
 // override with the X-HTTP-Method-Override header in the request
 app.use(methodOverride('X-HTTP-Method-Override'))
 
-// parse application/x-www-form-urlencoded
+// parse application/x-www-form-urlencoded (req.body)
 app.use(bodyParser.urlencoded({ extended: false }))
 
 app.engine('ejs', require('ejs-locals'));
@@ -38,16 +37,6 @@ session = require("express-session")({
   }),
 
 app.use(session);
-
-/*
-app.use(session({
-  secret: config.get('session:secret'),
-  key: config.get('session:key'),
-  cookie: config.get('session:cookie'),
-  store: sessionStore,
-  resave: true,
-  saveUninitialized: true
-}));*/
 
 app.use(require('middleware/sendHttpError'));
 app.use(require('middleware/loadUser'));
