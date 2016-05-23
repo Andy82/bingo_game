@@ -1,4 +1,3 @@
-//$(document).ready(function(data){
 (function(){
 	
 var socket = io.connect();
@@ -33,11 +32,20 @@ var socket = io.connect();
 		$('#send').prop('disabled', true);
 	});
 
+	$("input[type=text]").focus(function () {
+		$(this).animate({
+			width: "10%"
+		}, 100);
+	});
+	$(this).focusout(function () {
+		$("input[type=text]").animate({
+			width: "5%"
+		}, 100);
+	});
 
 	socket.on('echo', function(msg){
 		$('#messages').append($('<li>').text(msg));
 	});
-
 	socket.on('gameStarted',function(data){
 		console.log("A new game is started");
 	});
