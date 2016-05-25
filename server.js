@@ -45,7 +45,10 @@ app.use(require('middleware/loadUser'));
 
 require('routes')(app);
 
+//Redirect to AngularJS
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use('/app', express.static('app'));
 
 var server = http.createServer(app);
 

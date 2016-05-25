@@ -1,7 +1,8 @@
 var User = require('models/user').User;
 
 exports.get = function(req, res) {
-  res.render('users');
+  //res.render('users');
+  res.redirect('/app/users');
 };
 
 exports.apiGet = function(req, res) {
