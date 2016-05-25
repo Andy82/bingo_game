@@ -15,6 +15,7 @@
 	
 	<script type="text/javascript" src="/js/main.js"></script>
 </head>
+
 <body>
 <div data-role="header" data-theme="a" data-position="fixed">
 
@@ -24,14 +25,15 @@
 	<% } %>	
 	</h1>
 	
-	<%-partial('topNavigation')%>
 	
-</div><!-- /header -->
+	<%-partial('topNavigation')%>
+</div>
 
   <h1><%=blocks.title%></h1>
 
   <%-body -%>
-</section>
+
+		  
 	<div data-role="footer" data-theme="a" data-position="fixed">
 		<h4>Welcome to the BINGO.</h4>
 		<h4 style="display: none">Game started!</h4>

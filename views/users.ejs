@@ -1,14 +1,19 @@
 <html ng-app="app">
 <head>
-    <title>Bingo Users</title>
+    <!-- META -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Optimize mobile viewport -->
 
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+    <title>Node/Angular Todo App</title>
+
+    <!-- SCROLLS -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"><!-- load bootstrap -->
     <style>
         html                    { overflow-y:scroll; }
         body                    { padding-top:50px; }
         #todo-list              { margin-bottom:30px; }
     </style>
-  
+ 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script><!-- load jquery -->
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script><!-- load angular -->
     <script src="/js/controllers.js"></script>
@@ -17,16 +22,16 @@
 <body ng-controller="mainController">
     <div class="container">
 
-        <div class="jumbotron text-center">
+        <div class="text-center">
             <h1>Users in Bingo <span class="label label-info">{{ users.length }}</span></h1>
         </div>
 
-         <div id="todo-list" class="row">
+         <div id="todo-list">
             <div class="col-sm-4 col-sm-offset-4">
 
-                <div class="checkbox" ng-repeat="user in users">
+                <div ng-repeat="user in users" >
                     <label>
-                        <input type="checkbox" ng-click="deleteUser(user._id)"> {{ user.username }}
+                        <button class="btn btn-info btn-lg" type="button" ng-click="deleteUser(user._id)"> {{ user.username }} </button>
                     </label>
                 </div>
 
@@ -34,7 +39,7 @@
         </div>
 
         <div id="todo-form" class="row">
-            <div class="col-sm-8 col-sm-offset-2 text-center">
+            <div class="col-sm-4 col-sm-offset-4 text-center">
                 <form>
                     <div class="form-group">
 
@@ -47,6 +52,5 @@
         </div>
 
     </div>
-
 </body>
 </html>
